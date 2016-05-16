@@ -1,5 +1,5 @@
 # PropertyDescriptorASM
-  PropertyDescriptorASM是一个依赖于“ASM”、通过反射的方式快速调用get与set方法的微型工具包。由于目前代码非常不成熟，所以希望各路大牛们帮忙维护，目前本人也在开发一套轻量级的jdbc框架，希望以后可以与此项目相结合
+  PropertyDescriptorASM是一个依赖于“ASM”、通过反射的方式快速调用get与set方法的微型工具包。目前项目只是一个雏形，功能方面还有许多需要完善的地方，所以希望各路大牛们帮忙维护。目前本人也在开发一套轻量级的jdbc框架，希望以后可以与此项目相结合
 # 如何使用
   TestEntity testEntity = new TestEntity(); <br/>
   // it's an example of how to initialise a AccessMethod for TestEntity <br/>
