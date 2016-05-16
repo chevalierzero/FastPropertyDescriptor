@@ -1,16 +1,20 @@
 package org.chevalier.reflect;
 
+import javax.lang.model.element.Modifier;
+
 public class TestEntity {
 
-	private int intValue;
+	private byte byteValue;
+	private char charValue;
 	private short shortValue;
+	private int intValue;
 	private long longValue;
 	private float floatValue;
 	private double doubleValue;
-	private char charValue;
-	private byte byteValue;
 	private boolean booleanValue;
 	private String stringValue;
+	private Modifier enumValue;
+	private Object objectValue;
 
 	public int getIntValue() {
 		return intValue;
@@ -82,6 +86,22 @@ public class TestEntity {
 
 	public void setStringValue(String stringValue) {
 		this.stringValue = stringValue;
+	}
+
+	public Modifier getEnumValue() {
+		return enumValue;
+	}
+
+	public void setEnumValue(Modifier enumValue) {
+		this.enumValue = enumValue;
+	}
+
+	public Object getObjectValue() {
+		return objectValue;
+	}
+
+	public void setObjectValue(Object objectValue) {
+		this.objectValue = objectValue;
 	}
 
 }
