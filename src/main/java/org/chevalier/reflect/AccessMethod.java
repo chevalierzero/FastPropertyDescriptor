@@ -1,7 +1,6 @@
 package org.chevalier.reflect;
 
 /**
- * 
  * @author Chevalier (chevalier_zero@hotmail.com)
  */
 public interface AccessMethod {
