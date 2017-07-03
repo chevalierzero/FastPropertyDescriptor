@@ -1,7 +1,6 @@
 package org.chevalier.reflect;
 
 /**
- * 
  * @author Chevalier (chevalier_zero@hotmail.com)
  */
 public final class AccessMethodFactory {
@@ -33,5 +32,4 @@ public final class AccessMethodFactory {
 		
 		return accessSetMethod;
 	}
-	
 }
