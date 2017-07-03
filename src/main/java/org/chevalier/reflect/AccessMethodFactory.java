@@ -14,7 +14,7 @@ public final class AccessMethodFactory {
 		
 		if(accessSetMethod == null){
 			
-			synchronized (AccessMethodFactory.class) {
+			synchronized (clz.getSimpleName().intern()) {
 				
 				accessSetMethod = accessSetMethods.get(clz.getName());
 				
@@ -29,7 +29,6 @@ public final class AccessMethodFactory {
 				
 				}
 			}
-			
 		}
 		
 		return accessSetMethod;
