@@ -37,6 +37,7 @@ class ASMUtil extends ClassLoader implements Opcodes {
 			if(className.equals(className)){
 				
 				className += "2";
+				
 			}else{
 				
 				int index = Integer.parseInt(className.substring(className.length() - 1));
@@ -46,8 +47,6 @@ class ASMUtil extends ClassLoader implements Opcodes {
 			
 			className = key;
 		}
-
-		classNames.put(key, className);
 		
 		ClassWriter cw = new ClassWriter(COMPUTE_MAXS);
 
@@ -74,6 +73,8 @@ class ASMUtil extends ClassLoader implements Opcodes {
 
 		Object obj = exampleClass.newInstance();
 		AccessMethod asm = (AccessMethod) obj;
+
+		classNames.put(key, className);
 		
 		return asm;
 	}
