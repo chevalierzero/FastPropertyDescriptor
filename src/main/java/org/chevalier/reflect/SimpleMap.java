@@ -24,7 +24,7 @@ class SimpleMap<K, V>{
 		
 		Entry<K, V> entry = getEntry(key, index);
 		
-		return entry != null ? entry.value : null;
+		return (entry != null) ? entry.value : null;
 	}
 	
 	private Entry<K, V> getEntry(K key, int index){
