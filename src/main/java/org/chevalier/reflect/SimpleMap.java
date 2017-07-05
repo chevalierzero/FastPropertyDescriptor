@@ -60,9 +60,9 @@ class SimpleMap<K, V>{
 				oldValue = entry.value;
 				entry.value = value;
 			}
-			
-			return oldValue;
 		}
+		
+		return oldValue;
 	}
 	
 	public int hash(K key){
