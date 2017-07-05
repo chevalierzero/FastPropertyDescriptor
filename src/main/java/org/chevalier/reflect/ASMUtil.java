@@ -17,7 +17,6 @@ import java.util.Map;
 import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 
 /**
- * 
  * @author Chevalier (chevalier_zero@hotmail.com)
  */
 class ASMUtil extends ClassLoader implements Opcodes {
@@ -27,26 +26,8 @@ class ASMUtil extends ClassLoader implements Opcodes {
 	public static AccessMethod create(Class<?> clzEntity) throws Exception {
 
 		Class<AccessMethod> clz = AccessMethod.class;
-		String className = clzEntity.getSimpleName() + clz.getSimpleName() + "Impl";
-		String key = className;
-		
-		className = classNames.get(className);
-		
-		if(className != null){
-			
-			if(className.equals(className)){
-				
-				className += "2";
-				
-			}else{
-				
-				int index = Integer.parseInt(className.substring(className.length() - 1));
-				className = className + (++index);
-			}
-		}else{
-			
-			className = key;
-		}
+		String key = clzEntity.getSimpleName() + clz.getSimpleName() + "Impl";
+		String className = getClassName(key);
 		
 		ClassWriter cw = new ClassWriter(COMPUTE_MAXS);
 
@@ -73,10 +54,45 @@ class ASMUtil extends ClassLoader implements Opcodes {
 
 		Object obj = exampleClass.newInstance();
 		AccessMethod asm = (AccessMethod) obj;
+		
+		return asm;
+	}
+	
+	/**
+	 * 构造类名称，如果类名重复则在结尾加上一个递增的数字
+	 * @param key
+	 * @return
+	 */
+	private static String getClassName(String key){
+
+		String className = classNames.get(key);
+		
+		if(className != null){
+			
+			if(className.equals(key)){
+				
+				className += "2";
+				
+			}else{
+				
+				// 获取类名后面的数字，继续累加
+				int index = Integer.parseInt(className.substring(key.length()));
+				
+				if(index >= Integer.MAX_VALUE){
+					
+					throw new Error("too many classes with the same name");
+				}
+				
+				className = key + (++index);
+			}
+		}else{
+			
+			className = key;
+		}
 
 		classNames.put(key, className);
 		
-		return asm;
+		return className;
 	}
 	
 	private static void makeMethodGet(ClassWriter cw, String methodName, String className, Class<?> clzEntity) {
