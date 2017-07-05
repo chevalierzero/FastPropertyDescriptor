@@ -33,5 +33,4 @@ public class Main {
 		System.out.println(accessMethod.get(testEntity, "enumValue"));
 		System.out.println(accessMethod.get(testEntity, "objectValue"));
 	}
-
 }
