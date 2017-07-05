@@ -9,7 +9,7 @@ class SimpleMap<K, V>{
 	
 	public SimpleMap(){
 		
-		this(100);
+		this(128);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -47,19 +47,22 @@ class SimpleMap<K, V>{
 		final int hash = hash(key);
 		final int index = index(hash);
 		
-		Entry<K, V> entry = getEntry(key, index);
-		
-		if(entry == null){
-
-			table[index] = new Entry<K, V>(hash, key, value, table[index]);
-
-		}else{
+		synchronized (Integer.valueOf(index)) {
 			
-			oldValue = entry.value;
-			entry.value = value;
+			Entry<K, V> entry = getEntry(key, index);
+			
+			if(entry == null){
+
+				table[index] = new Entry<K, V>(hash, key, value, table[index]);
+
+			}else{
+				
+				oldValue = entry.value;
+				entry.value = value;
+			}
+			
+			return oldValue;
 		}
-		
-		return oldValue;
 	}
 	
 	public int hash(K key){
@@ -76,8 +79,7 @@ class SimpleMap<K, V>{
 		
 		final int hashcode;
 		final K key;
-		V value;
-
+		volatile V value;
 		final Entry<K, V> next;
 		
 		public Entry(int hashcode, K key, V value, Entry<K, V> next) {

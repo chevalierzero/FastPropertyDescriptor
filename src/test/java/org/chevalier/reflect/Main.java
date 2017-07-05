@@ -7,8 +7,8 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		
 		AccessMethod accessMethod = AccessMethodFactory.getAccessMethod(TestEntity.class);
+		
 		TestEntity testEntity = TestEntity.class.newInstance();
-
 		accessMethod.set(testEntity, "byteValue", Byte.MAX_VALUE);
 		accessMethod.set(testEntity, "charValue", 'A');
 		accessMethod.set(testEntity, "shortValue", Short.MAX_VALUE);
