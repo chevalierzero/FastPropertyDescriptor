@@ -38,32 +38,7 @@ package org.chevalier.reflect.asm;
  * 
  * @author Eric Bruneton
  */
-public class ClassWriter extends ClassVisitor {
-
-    /**
-     * Flag to automatically compute the maximum stack size and the maximum
-     * number of local variables of methods. If this flag is set, then the
-     * arguments of the {@link MethodVisitor#visitMaxs visitMaxs} method of the
-     * {@link MethodVisitor} returned by the {@link #visitMethod visitMethod}
-     * method will be ignored, and computed automatically from the signature and
-     * the bytecode of each method.
-     * 
-     * @see #ClassWriter(int)
-     */
-    public static final int COMPUTE_MAXS = 1;
-
-    /**
-     * Flag to automatically compute the stack map frames of methods from
-     * scratch. If this flag is set, then the calls to the
-     * {@link MethodVisitor#visitFrame} method are ignored, and the stack map
-     * frames are recomputed from the methods bytecode. The arguments of the
-     * {@link MethodVisitor#visitMaxs visitMaxs} method are also ignored and
-     * recomputed from the bytecode. In other words, computeFrames implies
-     * computeMaxs.
-     * 
-     * @see #ClassWriter(int)
-     */
-    public static final int COMPUTE_FRAMES = 2;
+public class ClassWriter  {
 
     /**
      * Pseudo access flag to distinguish between the synthetic attribute and the
@@ -449,17 +424,6 @@ public class ClassWriter extends ClassVisitor {
     MethodWriter lastMethod;
 
     /**
-     * <tt>true</tt> if the maximum stack size and number of local variables
-     * must be automatically computed.
-     */
-    private boolean computeMaxs;
-
-    /**
-     * <tt>true</tt> if the stack map frames must be recomputed from scratch.
-     */
-    private boolean computeFrames;
-
-    /**
      * <tt>true</tt> if the stack map tables of this class are invalid. The
      * {@link MethodWriter#resizeInstructions} method cannot transform existing
      * stack map tables, and so produces potentially invalid classes when it is
@@ -561,6 +525,10 @@ public class ClassWriter extends ClassVisitor {
     // Constructor
     // ------------------------------------------------------------------------
 
+    public ClassWriter() {
+        this(1); //COMPUTE_MAXS
+    }
+    
     /**
      * Constructs a new {@link ClassWriter} object.
      * 
@@ -569,8 +537,7 @@ public class ClassWriter extends ClassVisitor {
      *            of this class. See {@link #COMPUTE_MAXS},
      *            {@link #COMPUTE_FRAMES}.
      */
-    public ClassWriter(final int flags) {
-        super(Opcodes.ASM5);
+    private ClassWriter(final int flags) {
         index = 1;
         pool = new ByteVector();
         items = new Item[256];
@@ -579,11 +546,8 @@ public class ClassWriter extends ClassVisitor {
         key2 = new Item();
         key3 = new Item();
         key4 = new Item();
-        this.computeMaxs = (flags & COMPUTE_MAXS) != 0;
-        this.computeFrames = (flags & COMPUTE_FRAMES) != 0;
     }
 
-    @Override
     public final void visit(final int version, final int access,
             final String name, final String signature, final String superName,
             final String[] interfaces) {
@@ -601,7 +565,6 @@ public class ClassWriter extends ClassVisitor {
         }
     }
 
-    @Override
     public final void visitSource(final String file, final String debug) {
         if (file != null) {
             sourceFile = newUTF8(file);
@@ -612,7 +575,6 @@ public class ClassWriter extends ClassVisitor {
         }
     }
 
-    @Override
     public final void visitOuterClass(final String owner, final String name,
             final String desc) {
         enclosingMethodOwner = newClass(owner);
@@ -621,7 +583,6 @@ public class ClassWriter extends ClassVisitor {
         }
     }
 
-    @Override
     public final void visitInnerClass(final String name,
             final String outerName, final String innerName, final int access) {
         if (innerClasses == null) {
@@ -652,20 +613,17 @@ public class ClassWriter extends ClassVisitor {
         }
     }
 
-    @Override
-    public final FieldVisitor visitField(final int access, final String name,
+    public final FieldWriter visitField(final int access, final String name,
             final String desc, final String signature, final Object value) {
         return new FieldWriter(this, access, name, desc, signature, value);
     }
 
-    @Override
-    public final MethodVisitor visitMethod(final int access, final String name,
+    public final MethodWriter visitMethod(final int access, final String name,
             final String desc, final String signature, final String[] exceptions) {
         return new MethodWriter(this, access, name, desc, signature,
-                exceptions, computeMaxs, computeFrames);
+                exceptions);
     }
 
-    @Override
     public final void visitEnd() {
     }
 

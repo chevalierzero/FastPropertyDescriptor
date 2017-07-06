@@ -34,12 +34,18 @@ package org.chevalier.reflect.asm;
  * 
  * @author Eric Bruneton
  */
-final class FieldWriter extends FieldVisitor {
+final class FieldWriter {
 
     /**
      * The class writer to which this field must be added.
      */
     private final ClassWriter cw;
+
+    /**
+     * The field visitor to which this visitor must delegate method calls. May
+     * be null.
+     */
+    protected FieldWriter fv;
 
     /**
      * Access flags of this field.
@@ -86,7 +92,6 @@ final class FieldWriter extends FieldVisitor {
      */
     FieldWriter(final ClassWriter cw, final int access, final String name,
             final String desc, final String signature, final Object value) {
-        super(Opcodes.ASM5);
         if (cw.firstField == null) {
             cw.firstField = this;
         } else {
@@ -106,7 +111,6 @@ final class FieldWriter extends FieldVisitor {
     // Implementation of the FieldVisitor abstract class
     // ------------------------------------------------------------------------
 
-    @Override
     public void visitEnd() {
     }
 
