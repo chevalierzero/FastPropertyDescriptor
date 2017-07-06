@@ -15,6 +15,8 @@ public class TestEntity {
 	private String stringValue;
 	private Modifier enumValue;
 	private Object objectValue;
+	private int[] intValues;
+	private Object[] objectValues;
 
 	public int getIntValue() {
 		return intValue;
@@ -104,4 +106,19 @@ public class TestEntity {
 		this.objectValue = objectValue;
 	}
 
+	public int[] getIntValues() {
+		return intValues;
+	}
+
+	public void setIntValues(int[] intValues) {
+		this.intValues = intValues;
+	}
+	
+	public Object[] getObjectValues() {
+		return objectValues;
+	}
+
+	public void setObjectValues(Object[] objectValues) {
+		this.objectValues = objectValues;
+	}
 }

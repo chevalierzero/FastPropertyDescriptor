@@ -1,5 +1,7 @@
 package org.chevalier.reflect;
 
+import java.util.Arrays;
+
 import javax.lang.model.element.Modifier;
 
 public class Main {
@@ -20,6 +22,8 @@ public class Main {
 		accessMethod.set(testEntity, "stringValue", "Hello World!");
 		accessMethod.set(testEntity, "enumValue", Modifier.ABSTRACT);
 		accessMethod.set(testEntity, "objectValue", new Object());
+		accessMethod.set(testEntity, "intValues", new int[]{1, 2, 3, 4, 5});
+		accessMethod.set(testEntity, "objectValues", new Object[]{new Object(), new Object()});
 
 		System.out.println(accessMethod.get(testEntity, "byteValue"));
 		System.out.println(accessMethod.get(testEntity, "charValue"));
@@ -32,5 +36,7 @@ public class Main {
 		System.out.println(accessMethod.get(testEntity, "stringValue"));
 		System.out.println(accessMethod.get(testEntity, "enumValue"));
 		System.out.println(accessMethod.get(testEntity, "objectValue"));
+		System.out.println(Arrays.toString((int[])accessMethod.get(testEntity, "intValues")));
+		System.out.println(Arrays.toString((Object[])accessMethod.get(testEntity, "objectValues")));
 	}
 }
