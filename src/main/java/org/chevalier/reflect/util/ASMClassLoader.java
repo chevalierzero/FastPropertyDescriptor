@@ -1,10 +1,10 @@
-package org.chevalier.reflect;
+package org.chevalier.reflect.util;
 
+import org.chevalier.reflect.AccessMethod;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -19,7 +19,7 @@ import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 /**
  * @author Chevalier (chevalier_zero@hotmail.com)
  */
-class ASMUtil extends ClassLoader implements Opcodes {
+public class ASMClassLoader extends ClassLoader implements Opcodes {
 	
 	private static SimpleMap<String, String> classNames = new SimpleMap<String, String>();
 
@@ -49,7 +49,7 @@ class ASMUtil extends ClassLoader implements Opcodes {
 		
 		byte[] code = cw.toByteArray();
 		
-		ASMUtil loader = new ASMUtil();
+		ASMClassLoader loader = new ASMClassLoader();
 		Class<?> exampleClass = loader.defineClass(className, code, 0, code.length);
 
 		Object obj = exampleClass.newInstance();
@@ -140,14 +140,14 @@ class ASMUtil extends ClassLoader implements Opcodes {
 			try {
 
 				Map<String, Object> setField = setFields.get(i);
-
+				
 				String fieldName = (String) setField.get("fieldName");
 				Class<?> fieldClass = (Class<?>) setField.get("fieldType");
-				Class<?> fieldRefClass = castPriToRef(fieldClass);
-				String fieldType = Type.getDescriptor(fieldClass);
-				String fieldClassPath = Type.getInternalName(fieldClass);
-				String fieldRefType = Type.getDescriptor(fieldRefClass);
-				String fieldRefClassPath = Type.getInternalName(fieldRefClass);
+				Class<?> fieldRefClass = ASMUtils.getReferenceType(fieldClass);
+				String fieldType = ASMUtils.getDescriptor(fieldClass);
+				String fieldClassPath = ASMUtils.getInternalName(fieldClass);
+				String fieldRefType = ASMUtils.getDescriptor(fieldRefClass);
+				String fieldRefClassPath = ASMUtils.getInternalName(fieldRefClass);
 				String getName = (String) setField.get("getName");
 				Label lblElse = null;
 				
@@ -190,7 +190,6 @@ class ASMUtil extends ClassLoader implements Opcodes {
 		mv.visitInsn(ARETURN);
 		mv.visitMaxs(2, 2);
 		mv.visitEnd();
-		
 	}
 
 	private static void makeMethodSet(ClassWriter cw, String methodName, String className, Class<?> clzEntity) {
@@ -238,13 +237,13 @@ class ASMUtil extends ClassLoader implements Opcodes {
 			try {
 
 				Map<String, Object> setField = setFields.get(i);
-
+				
 				String fieldName = (String) setField.get("fieldName");
 				Class<?> fieldClass = (Class<?>) setField.get("fieldType");
-				Class<?> fieldRefClass = castPriToRef(fieldClass);
-				String fieldType = Type.getDescriptor(fieldClass);
-				String fieldClassPath = Type.getInternalName(fieldClass);
-				String fieldRefClassPath = Type.getInternalName(fieldRefClass);
+				Class<?> fieldRefClass = ASMUtils.getReferenceType(fieldClass);
+				String fieldType = ASMUtils.getDescriptor(fieldClass);
+				String fieldClassPath = ASMUtils.getInternalName(fieldClass);
+				String fieldRefClassPath = ASMUtils.getInternalName(fieldRefClass);
 				String setName = (String) setField.get("setName");
 				Label lblElse = null;
 				
@@ -288,51 +287,5 @@ class ASMUtil extends ClassLoader implements Opcodes {
 		mv.visitInsn(RETURN);
 		mv.visitMaxs(2, 2);
 		mv.visitEnd();
-		
-	}
-	
-	private static Class<?> castPriToRef(Class<?> clz){
-		
-		Class<?> refClz = clz;
-		
-		if(clz.isPrimitive()){
-
-			switch (clz.getName()) {
-			
-				case "byte":
-					refClz = Byte.class;
-					break;
-					
-				case "char":
-					refClz = Character.class;
-					break;
-				
-				case "short":
-					refClz = Short.class;
-					break;
-				
-				case "int":
-					refClz = Integer.class;
-					break;
-					
-				case "long":
-					refClz = Long.class;
-					break;
-					
-				case "float":
-					refClz = Float.class;
-					break;
-		
-				case "double":
-					refClz = Double.class;
-					break;
-				
-				case "boolean":
-					refClz = Boolean.class;
-					break;
-			}
-		}
-		
-		return refClz;
 	}
 }

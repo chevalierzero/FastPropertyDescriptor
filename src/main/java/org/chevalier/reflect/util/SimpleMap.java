@@ -1,9 +1,9 @@
-package org.chevalier.reflect;
+package org.chevalier.reflect.util;
 
 /**
  * @author Chevalier (chevalier_zero@hotmail.com)
  */
-class SimpleMap<K, V>{
+public class SimpleMap<K, V>{
 	
 	private final Entry<K, V>[] table;
 	
@@ -35,7 +35,6 @@ class SimpleMap<K, V>{
 				
 				return entry;
 			}
-			
 		}
 		
 		return null;
@@ -75,7 +74,7 @@ class SimpleMap<K, V>{
 		return hash & (table.length - 1);
 	}
 
-	public static class Entry<K, V>{
+	public final static class Entry<K, V>{
 		
 		final int hashcode;
 		final K key;
