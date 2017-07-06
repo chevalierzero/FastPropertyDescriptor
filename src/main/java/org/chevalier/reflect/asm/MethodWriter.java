@@ -37,7 +37,7 @@ package org.chevalier.reflect.asm;
  * @author Eric Bruneton
  * @author Eugene Kuleshov
  */
-public class MethodWriter extends MethodVisitor {
+public class MethodWriter {
 
     /**
      * Pseudo access flag used to denote constructors.
@@ -96,6 +96,12 @@ public class MethodWriter extends MethodVisitor {
      * The class writer to which this method must be added.
      */
     final ClassWriter cw;
+    
+    /**
+     * The method visitor to which this visitor must delegate method calls. May
+     * be null.
+     */
+    protected MethodWriter mv;
 
     /**
      * Access flags of this method.
@@ -283,34 +289,9 @@ public class MethodWriter extends MethodVisitor {
     // Constructor
     // ------------------------------------------------------------------------
 
-    /**
-     * Constructs a new {@link MethodWriter}.
-     * 
-     * @param cw
-     *            the class writer in which the method must be added.
-     * @param access
-     *            the method's access flags (see {@link Opcodes}).
-     * @param name
-     *            the method's name.
-     * @param desc
-     *            the method's descriptor (see {@link Type}).
-     * @param signature
-     *            the method's signature. May be <tt>null</tt>.
-     * @param exceptions
-     *            the internal names of the method's exceptions. May be
-     *            <tt>null</tt>.
-     * @param computeMaxs
-     *            <tt>true</tt> if the maximum stack size and number of local
-     *            variables must be automatically computed.
-     * @param computeFrames
-     *            <tt>true</tt> if the stack map tables must be recomputed from
-     *            scratch.
-     */
     MethodWriter(final ClassWriter cw, final int access, final String name,
             final String desc, final String signature,
-            final String[] exceptions, final boolean computeMaxs,
-            final boolean computeFrames) {
-        super(Opcodes.ASM5);
+            final String[] exceptions) {
         if (cw.firstMethod == null) {
             cw.firstMethod = this;
         } else {
@@ -333,26 +314,23 @@ public class MethodWriter extends MethodVisitor {
             }
         }
         
-        if (computeMaxs || computeFrames) {
-            // updates maxLocals
-            int size = Type.getArgumentsAndReturnSizes(descriptor) >> 2;
-            if ((access & Opcodes.ACC_STATIC) != 0) {
-                --size;
-            }
-            maxLocals = size;
-            currentLocals = size;
-            // creates and visits the label for the first basic block
-            labels = new Label();
-            labels.status |= Label.PUSHED;
-            visitLabel(labels);
+        // updates maxLocals
+        int size = Type.getArgumentsAndReturnSizes(descriptor) >> 2;
+        if ((access & Opcodes.ACC_STATIC) != 0) {
+            --size;
         }
+        maxLocals = size;
+        currentLocals = size;
+        // creates and visits the label for the first basic block
+        labels = new Label();
+        labels.status |= Label.PUSHED;
+        visitLabel(labels);
     }
 
     // ------------------------------------------------------------------------
     // Implementation of the MethodVisitor abstract class
     // ------------------------------------------------------------------------
 
-    @Override
     public void visitParameter(String name, int access) {
         if (methodParameters == null) {
             methodParameters = new ByteVector();
@@ -362,11 +340,9 @@ public class MethodWriter extends MethodVisitor {
                 .putShort(access);
     }
 
-    @Override
     public void visitCode() {
     }
-
-    @Override
+    
     public void visitFrame(final int type, final int nLocal,
             final Object[] local, final int nStack, final Object[] stack) {
 
@@ -466,7 +442,6 @@ public class MethodWriter extends MethodVisitor {
         maxLocals = Math.max(maxLocals, currentLocals);
     }
 
-    @Override
     public void visitInsn(final int opcode) {
         // adds the instruction to the bytecode of the method
         code.putByte(opcode);
@@ -487,7 +462,6 @@ public class MethodWriter extends MethodVisitor {
         }
     }
 
-    @Override
     public void visitIntInsn(final int opcode, final int operand) {
         // Label currentBlock = this.currentBlock;
         if (currentBlock != null) {
@@ -509,7 +483,6 @@ public class MethodWriter extends MethodVisitor {
         }
     }
 
-    @Override
     public void visitVarInsn(final int opcode, final int var) {
         // Label currentBlock = this.currentBlock;
         if (currentBlock != null) {
@@ -559,7 +532,6 @@ public class MethodWriter extends MethodVisitor {
         }
     }
 
-    @Override
     public void visitTypeInsn(final int opcode, final String type) {
         Item i = cw.newClassItem(type);
         // Label currentBlock = this.currentBlock;
@@ -578,7 +550,6 @@ public class MethodWriter extends MethodVisitor {
         code.put12(opcode, i.index);
     }
 
-    @Override
     public void visitFieldInsn(final int opcode, final String owner,
             final String name, final String desc) {
         Item i = cw.newFieldItem(owner, name, desc);
@@ -612,7 +583,6 @@ public class MethodWriter extends MethodVisitor {
         code.put12(opcode, i.index);
     }
 
-    @Override
     public void visitMethodInsn(final int opcode, final String owner,
             final String name, final String desc, final boolean itf) {
         Item i = cw.newMethodItem(owner, name, desc, itf);
@@ -659,7 +629,6 @@ public class MethodWriter extends MethodVisitor {
         }
     }
 
-    @Override
     public void visitJumpInsn(final int opcode, final Label label) {
         // Label currentBlock = this.currentBlock;
         if (currentBlock != null) {
@@ -705,7 +674,6 @@ public class MethodWriter extends MethodVisitor {
         }
     }
 
-    @Override
     public void visitLabel(final Label label) {
         // resolves previous forward references to label, if any
         label.resolve(this, code.length, code.data);
@@ -730,7 +698,6 @@ public class MethodWriter extends MethodVisitor {
         previousBlock = label;
     }
 
-    @Override
     public void visitLdcInsn(final Object cst) {
         Item i = cw.newConstItem(cst);
         // Label currentBlock = this.currentBlock;
@@ -759,7 +726,6 @@ public class MethodWriter extends MethodVisitor {
         }
     }
 
-    @Override
     public void visitIincInsn(final int var, final int increment) {
         // updates max locals
         int n = var + 1;
@@ -775,7 +741,6 @@ public class MethodWriter extends MethodVisitor {
         }
     }
     
-    @Override
     public void visitTableSwitchInsn(final int min, final int max,
             final Label dflt, final Label... labels) {
         // adds the instruction to the bytecode of the method
@@ -791,7 +756,6 @@ public class MethodWriter extends MethodVisitor {
         visitSwitchInsn(dflt, labels);
     }
 
-    @Override
     public void visitLookupSwitchInsn(final Label dflt, final int[] keys,
             final Label[] labels) {
         // adds the instruction to the bytecode of the method
@@ -823,7 +787,6 @@ public class MethodWriter extends MethodVisitor {
         }
     }
 
-    @Override
     public void visitMultiANewArrayInsn(final String desc, final int dims) {
         Item i = cw.newClassItem(desc);
         // Label currentBlock = this.currentBlock;
@@ -836,7 +799,6 @@ public class MethodWriter extends MethodVisitor {
         code.put12(Opcodes.MULTIANEWARRAY, i.index).putByte(dims);
     }
 
-    @Override
     public void visitLocalVariable(final String name, final String desc,
             final String signature, final Label start, final Label end,
             final int index) {
@@ -866,7 +828,6 @@ public class MethodWriter extends MethodVisitor {
         }
     }
 
-    @Override
     public void visitLineNumber(final int line, final Label start) {
         if (lineNumber == null) {
             lineNumber = new ByteVector();
@@ -876,7 +837,6 @@ public class MethodWriter extends MethodVisitor {
         lineNumber.putShort(line);
     }
 
-    @Override
     public void visitMaxs(final int maxStack, final int maxLocals) {
 
         /*
@@ -926,7 +886,6 @@ public class MethodWriter extends MethodVisitor {
         this.maxStack = Math.max(maxStack, max);
     }
 
-    @Override
     public void visitEnd() {
     }
 

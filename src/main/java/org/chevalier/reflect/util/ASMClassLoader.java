@@ -3,7 +3,7 @@ package org.chevalier.reflect.util;
 import org.chevalier.reflect.AccessMethod;
 import org.chevalier.reflect.asm.ClassWriter;
 import org.chevalier.reflect.asm.Label;
-import org.chevalier.reflect.asm.MethodVisitor;
+import org.chevalier.reflect.asm.MethodWriter;
 import org.chevalier.reflect.asm.Opcodes;
 
 import java.beans.PropertyDescriptor;
@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.chevalier.reflect.asm.ClassWriter.COMPUTE_MAXS;
 
 /**
  * @author Chevalier (chevalier_zero@hotmail.com)
@@ -29,12 +27,12 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 		String key = clzEntity.getSimpleName() + clz.getSimpleName() + "Impl";
 		String className = getClassName(key);
 		
-		ClassWriter cw = new ClassWriter(COMPUTE_MAXS);
+		ClassWriter cw = new ClassWriter();
 
 		cw.visit(Opcodes.V1_7, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object",
 				new String[] { clz.getName().replace(".", "/") });
 
-		MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+		MethodWriter mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 
 		mv.visitVarInsn(ALOAD, 0);
 		mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
@@ -128,7 +126,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 			return;
 		}
 
-		MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, methodName,
+		MethodWriter mv = cw.visitMethod(Opcodes.ACC_PUBLIC, methodName,
 				"(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;", null, null);
 		
 		mv.visitCode();
@@ -225,7 +223,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 			return;
 		}
 
-		MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, methodName,
+		MethodWriter mv = cw.visitMethod(Opcodes.ACC_PUBLIC, methodName,
 				"(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;)V", null, null);
 		
 		mv.visitCode();
