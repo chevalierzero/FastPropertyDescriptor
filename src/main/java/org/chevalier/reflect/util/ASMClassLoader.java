@@ -1,10 +1,10 @@
 package org.chevalier.reflect.util;
 
 import org.chevalier.reflect.AccessMethod;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.chevalier.reflect.asm.ClassWriter;
+import org.chevalier.reflect.asm.Label;
+import org.chevalier.reflect.asm.MethodVisitor;
+import org.chevalier.reflect.asm.Opcodes;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
+import static org.chevalier.reflect.asm.ClassWriter.COMPUTE_MAXS;
 
 /**
  * @author Chevalier (chevalier_zero@hotmail.com)

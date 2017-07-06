@@ -1,6 +1,6 @@
 package org.chevalier.reflect.util;
 
-import org.objectweb.asm.Type;
+import org.chevalier.reflect.asm.Type;
 
 /**
  * @author Chevalier (chevalier_zero@hotmail.com)
