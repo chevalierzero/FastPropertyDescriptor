@@ -24,11 +24,10 @@ public final class AccessMethodFactory {
 				
 					try {
 						
-						accessSetMethod = ASMClassLoader.create(clz);
+						accessSetMethod = ASMClassLoader.getInstance().create(clz);
 						accessSetMethods.put(clz.getName(), accessSetMethod);
 						
 					} catch (Exception e) {}
-				
 				}
 			}
 		}
