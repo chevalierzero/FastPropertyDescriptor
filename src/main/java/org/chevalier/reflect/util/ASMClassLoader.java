@@ -19,9 +19,21 @@ import java.util.Map;
  */
 public class ASMClassLoader extends ClassLoader implements Opcodes {
 	
-	private static SimpleMap<String, String> classNames = new SimpleMap<String, String>();
-
-	public static AccessMethod create(Class<?> clzEntity) throws Exception {
+	private SimpleMap<String, String> classNames = new SimpleMap<String, String>();
+	
+	private ASMClassLoader(){}
+	
+	public static ASMClassLoader getInstance() {  
+		
+        return SingletonHolder.INSTANCE;       
+    }  
+	
+	private final static class SingletonHolder{
+		
+		private final static ASMClassLoader INSTANCE = new ASMClassLoader();
+	}
+	
+	public AccessMethod create(Class<?> clzEntity) throws Exception {
 
 		Class<AccessMethod> clz = AccessMethod.class;
 		String key = clzEntity.getSimpleName() + clz.getSimpleName() + "Impl";
@@ -47,8 +59,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 		
 		byte[] code = cw.toByteArray();
 		
-		ASMClassLoader loader = new ASMClassLoader();
-		Class<?> exampleClass = loader.defineClass(className, code, 0, code.length);
+		Class<?> exampleClass = this.defineClass(className, code, 0, code.length);
 
 		Object obj = exampleClass.newInstance();
 		AccessMethod asm = (AccessMethod) obj;
@@ -61,7 +72,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 	 * @param key
 	 * @return
 	 */
-	private static String getClassName(String key){
+	private String getClassName(String key){
 
 		String className = classNames.get(key);
 		
@@ -93,7 +104,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 		return className;
 	}
 	
-	private static void makeMethodGet(ClassWriter cw, String methodName, String className, Class<?> clzEntity) {
+	private void makeMethodGet(ClassWriter cw, String methodName, String className, Class<?> clzEntity) {
 
 		Field[] fields = clzEntity.getDeclaredFields();
 
@@ -190,7 +201,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 		mv.visitEnd();
 	}
 
-	private static void makeMethodSet(ClassWriter cw, String methodName, String className, Class<?> clzEntity) {
+	private void makeMethodSet(ClassWriter cw, String methodName, String className, Class<?> clzEntity) {
 
 		Field[] fields = clzEntity.getDeclaredFields();
 
