@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class ASMClassLoader extends ClassLoader implements Opcodes {
 	
-	private SimpleMap<String, String> classNames = new SimpleMap<String, String>();
+	private final SimpleMap<String, String> classNames = new SimpleMap<String, String>();
 	
 	private ASMClassLoader(){}
 	
@@ -127,9 +127,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 				setFields.add(setField);
 
-			} catch (Exception e) {
-			}
-
+			} catch (Exception e) {}
 		}
 
 		if (setFields.isEmpty()) {
