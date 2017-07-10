@@ -1,5 +1,6 @@
 package org.chevalier.reflect.util;
 
+import org.chevalier.reflect.asm.Opcodes;
 import org.chevalier.reflect.asm.Type;
 
 /**
@@ -56,5 +57,45 @@ public class ASMUtils {
 		}
 
 		return clz;
+	}
+	
+	public static int getVersionOpcode(){
+		
+		String version = System.getProperty("java.version");
+		
+		if (version.startsWith("1.7")) {
+
+			return Opcodes.V1_7;
+
+		} else if (version.startsWith("1.8")) {
+
+			return Opcodes.V1_8;
+
+		} else if (version.startsWith("1_6")) {
+
+			return Opcodes.V1_6;
+
+		} else if (version.startsWith("1.5")) {
+
+			return Opcodes.V1_5;
+
+		} else if (version.startsWith("1.4")) {
+
+			return Opcodes.V1_4;
+		
+		} else if (version.startsWith("1.3")) {
+
+			return Opcodes.V1_3;
+			
+		} else if (version.startsWith("1.2")) {
+
+			return Opcodes.V1_2;
+			
+		} else if (version.startsWith("1.1")) {
+
+			return Opcodes.V1_1;
+		}
+		
+		return Opcodes.V1_7;
 	}
 }
