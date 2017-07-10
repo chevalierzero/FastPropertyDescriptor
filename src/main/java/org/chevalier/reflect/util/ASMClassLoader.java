@@ -38,13 +38,11 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 	public AccessMethod create(Class<?> clzEntity) throws Exception {
 
-		Class<AccessMethod> clz = AccessMethod.class;
-		String key = clzEntity.getSimpleName() + clz.getSimpleName() + "Impl";
-		String className = getClassName(key);
+		String className = getClassName(clzEntity);
 
 		ClassWriter cw = new ClassWriter();
 		cw.visit(VERSION_OPCODE, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object",
-				new String[] { clz.getName().replace(".", "/") });
+				new String[] { ASMUtils.getInternalName(AccessMethod.class) });
 
 		MethodWriter mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 		mv.visitVarInsn(ALOAD, 0);
@@ -74,8 +72,9 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 	 * @param key
 	 * @return
 	 */
-	private String getClassName(String key) {
+	private String getClassName(Class<?> clzEntity) {
 
+		String key = clzEntity.getSimpleName() + AccessMethod.class.getSimpleName() + "Impl";
 		String className = classNames.get(key);
 
 		if (className != null) {
@@ -143,7 +142,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 		mv.visitCode();
 		Label lblIf = new Label();
-		String entityPath = clzEntity.getName().replace(".", "/");
+		String entityPath = ASMUtils.getInternalName(clzEntity);
 
 		for (int i = 0, size = getFields.size(); i < size; i++) {
 
@@ -242,7 +241,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 		mv.visitCode();
 		Label lblIf = new Label();
-		String entityPath = clzEntity.getName().replace(".", "/");
+		String entityPath = ASMUtils.getInternalName(clzEntity);
 
 		for (int i = 0, size = setFields.size(); i < size; i++) {
 
