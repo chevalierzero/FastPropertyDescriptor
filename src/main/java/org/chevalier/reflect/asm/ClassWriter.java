@@ -549,8 +549,7 @@ public class ClassWriter  {
     }
 
     public final void visit(final int version, final int access,
-            final String name, final String signature, final String superName,
-            final String[] interfaces) {
+            final String name, final String superName, final String[] interfaces) {
         this.version = version;
         this.access = access;
         this.name = newClass(name);
