@@ -5,6 +5,15 @@ package org.chevalier.reflect.util;
  */
 public class SimpleMap<K, V>{
 	
+	private static int capacityMax;
+	
+	static{
+		// 获取配置信息中的Integer最大缓存数
+		String integerCache = sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
+		// 如果配置信息中没有的话，则使用默认的最大缓存数 + 1
+		capacityMax = (integerCache != null) ? (Integer.parseInt(integerCache) + 1) : 128;
+	}
+	
 	private final Entry<K, V>[] table;
 	
 	public SimpleMap(){
@@ -15,7 +24,12 @@ public class SimpleMap<K, V>{
 	@SuppressWarnings("unchecked")
 	public SimpleMap(int capacity){
 		
-		table = new Entry[capacity];
+		if(capacity <= 0){
+			
+			throw new IllegalArgumentException("Illegal initial capacity: " + capacity);
+		}
+		
+		table = new Entry[Math.min(capacity, capacityMax)];
 	}
 	
 	public V get(K key){
@@ -27,7 +41,7 @@ public class SimpleMap<K, V>{
 		return (entry != null) ? entry.value : null;
 	}
 	
-	private Entry<K, V> getEntry(K key, int index){
+	protected Entry<K, V> getEntry(K key, int index){
 		
 		for(Entry<K, V> entry = table[index]; entry != null; entry = entry.next){
 			
@@ -64,12 +78,12 @@ public class SimpleMap<K, V>{
 		return oldValue;
 	}
 	
-	public int hash(K key){
+	private int hash(K key){
 		
 		return key.hashCode();
 	}
 	
-	public int index(int hash){
+	private int index(int hash){
 		
 		return hash & (table.length - 1);
 	}
