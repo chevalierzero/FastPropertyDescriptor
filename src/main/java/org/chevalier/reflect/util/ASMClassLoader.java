@@ -23,8 +23,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 	
 	private final SimpleMap<String, String> classNames = new SimpleMap<String, String>();
 
-	private ASMClassLoader() {
-	}
+	private ASMClassLoader() { }
 
 	public static ASMClassLoader getInstance() {
 
@@ -35,20 +34,17 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 		private final static ASMClassLoader INSTANCE = new ASMClassLoader();
 	}
-
+	
 	public AccessMethod create(Class<?> clzEntity) throws Exception {
 
-		Class<AccessMethod> clz = AccessMethod.class;
-		String key = clzEntity.getSimpleName() + clz.getSimpleName() + "Impl";
-		String className = getClassName(key);
-
+		String className = getClassName(clzEntity);
 		ClassWriter cw = new ClassWriter();
-		cw.visit(VERSION_OPCODE, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object",
-				new String[] { clz.getName().replace(".", "/") });
+		cw.visit(VERSION_OPCODE, ACC_PUBLIC + ACC_SUPER, className, null, ASMUtils.getInternalName(AccessMethod.class),
+				null);
 
 		MethodWriter mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 		mv.visitVarInsn(ALOAD, 0);
-		mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+		mv.visitMethodInsn(INVOKESPECIAL, ASMUtils.getInternalName(AccessMethod.class), "<init>", "()V", false);
 		mv.visitInsn(RETURN);
 		mv.visitMaxs(1, 1);
 		mv.visitEnd();
@@ -67,15 +63,16 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 		return asm;
 	}
-
+	
 	/**
 	 * 构造类名称，如果类名重复则在结尾加上一个递增的数字
 	 * 
-	 * @param key
+	 * @param clzEntity
 	 * @return
 	 */
-	private String getClassName(String key) {
+	private String getClassName(Class<?> clzEntity) {
 
+		String key = clzEntity.getSimpleName() + AccessMethod.class.getSimpleName() + "Impl";
 		String className = classNames.get(key);
 
 		if (className != null) {
@@ -109,12 +106,12 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 	private void makeMethodGet(ClassWriter cw, String methodName, String className, Class<?> clzEntity) {
 
 		Field[] fields = clzEntity.getDeclaredFields();
-
-		List<Map<String, Object>> setFields = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> getFields = new ArrayList<Map<String, Object>>(fields.length);
 
 		for (int i = 0; i < fields.length; i++) {
 
 			if ((Modifier.FINAL & fields[i].getModifiers()) != 0) {
+				
 				continue;
 			}
 
@@ -127,13 +124,13 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 				setField.put("fieldType", fields[i].getType());
 				setField.put("getName", propertyDescriptor.getReadMethod().getName());
 
-				setFields.add(setField);
+				getFields.add(setField);
 
 			} catch (Exception e) {
 			}
 		}
 
-		if (setFields.isEmpty()) {
+		if (getFields.isEmpty()) {
 
 			return;
 		}
@@ -143,13 +140,13 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 		mv.visitCode();
 		Label lblIf = new Label();
-		String entityPath = clzEntity.getName().replace(".", "/");
+		String entityPath = ASMUtils.getInternalName(clzEntity);
 
-		for (int i = 0, size = setFields.size(); i < size; i++) {
+		for (int i = 0, size = getFields.size(); i < size; i++) {
 
 			try {
 
-				Map<String, Object> setField = setFields.get(i);
+				Map<String, Object> setField = getFields.get(i);
 
 				String fieldName = (String) setField.get("fieldName");
 				Class<?> fieldClass = (Class<?>) setField.get("fieldType");
@@ -207,12 +204,12 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 	private void makeMethodSet(ClassWriter cw, String methodName, String className, Class<?> clzEntity) {
 
 		Field[] fields = clzEntity.getDeclaredFields();
-
-		List<Map<String, Object>> setFields = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> setFields = new ArrayList<Map<String, Object>>(fields.length);
 
 		for (int i = 0; i < fields.length; i++) {
 
 			if ((Modifier.FINAL & fields[i].getModifiers()) != 0) {
+				
 				continue;
 			}
 
@@ -229,7 +226,6 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 			} catch (Exception e) {
 			}
-
 		}
 
 		if (setFields.isEmpty()) {
@@ -242,7 +238,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 		mv.visitCode();
 		Label lblIf = new Label();
-		String entityPath = clzEntity.getName().replace(".", "/");
+		String entityPath = ASMUtils.getInternalName(clzEntity);
 
 		for (int i = 0, size = setFields.size(); i < size; i++) {
 
@@ -295,7 +291,6 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 			} catch (Exception e) {
 			}
-
 		}
 
 		mv.visitInsn(RETURN);
