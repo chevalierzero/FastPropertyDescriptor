@@ -110,7 +110,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 		Field[] fields = clzEntity.getDeclaredFields();
 
-		List<Map<String, Object>> setFields = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> getFields = new ArrayList<Map<String, Object>>(fields.length);
 
 		for (int i = 0; i < fields.length; i++) {
 
@@ -127,13 +127,13 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 				setField.put("fieldType", fields[i].getType());
 				setField.put("getName", propertyDescriptor.getReadMethod().getName());
 
-				setFields.add(setField);
+				getFields.add(setField);
 
 			} catch (Exception e) {
 			}
 		}
 
-		if (setFields.isEmpty()) {
+		if (getFields.isEmpty()) {
 
 			return;
 		}
@@ -145,11 +145,11 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 		Label lblIf = new Label();
 		String entityPath = clzEntity.getName().replace(".", "/");
 
-		for (int i = 0, size = setFields.size(); i < size; i++) {
+		for (int i = 0, size = getFields.size(); i < size; i++) {
 
 			try {
 
-				Map<String, Object> setField = setFields.get(i);
+				Map<String, Object> setField = getFields.get(i);
 
 				String fieldName = (String) setField.get("fieldName");
 				Class<?> fieldClass = (Class<?>) setField.get("fieldType");
@@ -208,7 +208,7 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 
 		Field[] fields = clzEntity.getDeclaredFields();
 
-		List<Map<String, Object>> setFields = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> setFields = new ArrayList<Map<String, Object>>(fields.length);
 
 		for (int i = 0; i < fields.length; i++) {
 
