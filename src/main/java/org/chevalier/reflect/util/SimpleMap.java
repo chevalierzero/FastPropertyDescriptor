@@ -5,16 +5,24 @@ package org.chevalier.reflect.util;
  */
 public class SimpleMap<K, V>{
 	
+	// Integer缓存区中的最大值
 	private static int capacityMax;
+	private final Entry<K, V>[] table;
 	
 	static{
+		
+		int max = 127;
 		// 获取配置信息中的Integer最大缓存数
 		String integerCache = sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
+		
+        if (integerCache != null) {
+
+        	max = Math.max(Integer.parseInt(integerCache), max);
+        	max = Math.min(max, Integer.MAX_VALUE - 129);
+        }
 		// 如果配置信息中没有的话，则使用默认的最大缓存数 + 1
-		capacityMax = (integerCache != null) ? (Integer.parseInt(integerCache) + 1) : 128;
+		capacityMax = max + 1;
 	}
-	
-	private final Entry<K, V>[] table;
 	
 	public SimpleMap(){
 		
