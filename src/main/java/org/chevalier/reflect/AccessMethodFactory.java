@@ -1,6 +1,5 @@
 package org.chevalier.reflect;
 
-import org.chevalier.reflect.util.ASMClassLoader;
 import org.chevalier.reflect.util.SimpleMap;
 
 /**
@@ -29,7 +28,7 @@ public final class AccessMethodFactory {
 				
 					try {
 						
-						accessSetMethod = ASMClassLoader.getInstance().create(clz);
+						accessSetMethod = AccessMethodLoader.loadClass(clz);
 						ACCESS_METHODS.put(clz.getName(), accessSetMethod);
 						
 					} catch (Exception e) {}

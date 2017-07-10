@@ -4,6 +4,9 @@ import java.util.Arrays;
 
 import javax.lang.model.element.Modifier;
 
+import org.chevalier.reflect.AccessMethod;
+import org.chevalier.reflect.AccessMethodFactory;
+
 public class Main {
 
 	public static void main(String[] args) throws Exception {

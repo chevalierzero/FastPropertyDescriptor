@@ -10,7 +10,12 @@ public class ASMUtils {
 	
 	public static String getInternalName(Class<?> clz){
 		
-		return Type.getInternalName(clz);
+		return getInternalName(clz.getName());
+	}
+	
+	public static String getInternalName(String className){
+		
+		return className.replace('.', '/');
 	}
 	
 	public static String getDescriptor(Class<?> clz){
