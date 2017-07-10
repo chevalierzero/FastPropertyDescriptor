@@ -70,8 +70,8 @@ public class ASMUtils {
 		} else if (version.startsWith("1.8")) {
 
 			return Opcodes.V1_8;
-
-		} else if (version.startsWith("1_6")) {
+			
+		} else if (version.startsWith("1.6")) {
 
 			return Opcodes.V1_6;
 
