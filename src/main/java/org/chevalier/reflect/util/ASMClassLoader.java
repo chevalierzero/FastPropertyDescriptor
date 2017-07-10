@@ -19,8 +19,9 @@ import java.util.Map;
  */
 public class ASMClassLoader extends ClassLoader implements Opcodes {
 
+	private final static int VERSION_OPCODE = ASMUtils.getVersionOpcode();
+	
 	private final SimpleMap<String, String> classNames = new SimpleMap<String, String>();
-	private static int versionOpcode = ASMUtils.getVersionOpcode();
 
 	private ASMClassLoader() {
 	}
@@ -42,12 +43,10 @@ public class ASMClassLoader extends ClassLoader implements Opcodes {
 		String className = getClassName(key);
 
 		ClassWriter cw = new ClassWriter();
-
-		cw.visit(versionOpcode, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object",
+		cw.visit(VERSION_OPCODE, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object",
 				new String[] { clz.getName().replace(".", "/") });
 
 		MethodWriter mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
-
 		mv.visitVarInsn(ALOAD, 0);
 		mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
 		mv.visitInsn(RETURN);
