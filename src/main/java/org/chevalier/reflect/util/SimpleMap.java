@@ -6,21 +6,19 @@ package org.chevalier.reflect.util;
 public class SimpleMap<K, V>{
 	
 	private static int capacityMax;
-	private static int capacityMin;
 	
 	static{
 		// 获取配置信息中的Integer最大缓存数
 		String integerCache = sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
 		// 如果配置信息中没有的话，则使用默认的最大缓存数 + 1
 		capacityMax = (integerCache != null) ? (Integer.parseInt(integerCache) + 1) : 128;
-		capacityMin = Math.min(capacityMax, 128);
 	}
 	
 	private final Entry<K, V>[] table;
 	
 	public SimpleMap(){
 		
-		this(capacityMin);
+		this(128);
 	}
 	
 	@SuppressWarnings("unchecked")
