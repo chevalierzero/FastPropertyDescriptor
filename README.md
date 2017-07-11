@@ -1,5 +1,5 @@
-# PropertyDescriptorASM
-  PropertyDescriptorASM可以快速的对实体类的get、set方法进行反射调用，速度接近于直接使用代码调用，可以代替Java自带的反射方法
+# FastPropertyDescriptor
+  FastPropertyDescriptor可以快速的对实体类的get、set方法进行反射调用，速度接近于直接使用代码调用，可以代替Java自带的反射方法
 # 如何使用
   TestEntity testEntity = new TestEntity(); <br/>
   // it's an example of how to initialise a AccessMethod for TestEntity <br/>
