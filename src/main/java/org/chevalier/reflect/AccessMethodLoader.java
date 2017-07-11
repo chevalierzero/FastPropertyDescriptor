@@ -61,7 +61,7 @@ final class AccessMethodLoader implements Opcodes {
 
 		String key = clzEntity.getSimpleName();
 		String className = CLASS_NAMES.get(key);
-		String baseName = AccessMethod.class.getName() + "Impl";
+		String baseName = AccessMethod.class.getName() + "$" + key + "Impl";
 
 		if (className != null) {
 
