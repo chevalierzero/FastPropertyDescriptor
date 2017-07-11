@@ -63,27 +63,25 @@ final class AccessMethodLoader implements Opcodes {
 		String className = CLASS_NAMES.get(key);
 		String baseName = AccessMethod.class.getName() + "$" + key + "Impl";
 
-		if (className != null) {
-
-			if (className.length() == baseName.length()) {
-
-				className += "2";
-
-			} else {
-
-				// 获取类名后面的数字，继续累加
-				int index = Integer.parseInt(className.substring(baseName.length()));
-
-				if (index >= Integer.MAX_VALUE) {
-
-					throw new Error("too many classes with the same name");
-				}
-
-				className = baseName + (++index);
-			}
-		} else {
+		if (className == null) {
 
 			className = baseName;
+			
+		} else if (className.length() == baseName.length()) {
+
+			className = baseName + "2";
+
+		} else {
+
+			// 获取类名后面的数字，继续累加
+			int index = Integer.parseInt(className.substring(baseName.length()));
+
+			if (index >= Integer.MAX_VALUE) {
+
+				throw new Error("too many classes with the same name");
+			}
+
+			className = baseName + (++index);
 		}
 
 		CLASS_NAMES.put(key, className);
