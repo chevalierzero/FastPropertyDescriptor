@@ -17,15 +17,39 @@ public class SimpleMap<K, V>{
 		
         if (integerCache != null) {
 
-        	max = Math.min(Math.max(Integer.parseInt(integerCache), max), Integer.MAX_VALUE - 129);
+        	max = Math.min(Math.max(Integer.parseInt(integerCache), max), (Integer.MAX_VALUE >> 1) + 1);
         }
 		// 如果配置信息中没有的话，则使用默认的最大缓存数 + 1
-		capacityMax = max + 1;
+		capacityMax = findPowerOf2LowerNumber(max + 1);
 	}
 	
 	public SimpleMap(){
 		
 		this(128);
+	}
+	
+	// 根据传入的参数获取最接近该参数的2的整数次幂整数，返回的参数 >= 传入的参数
+	private final static int findPowerOf2UpperNumber(int num){
+
+		int number = 1;
+		while(number < num){
+			
+			number <<= 1;
+		}
+		
+		return number;
+	}
+	
+	// 根据传入的参数获取最接近该参数的2的整数次幂整数，返回的参数 <= 传入的参数
+	private final static int findPowerOf2LowerNumber(int num){
+
+		int number = 1;
+		while(number < num){
+			
+			number <<= 1;
+		}
+		
+		return (number == num) ? number : (number >>= 1);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -35,6 +59,9 @@ public class SimpleMap<K, V>{
 			
 			throw new IllegalArgumentException("Illegal initial capacity: " + capacity);
 		}
+		
+		// 保证初始容量为2的整数次幂
+		capacity = findPowerOf2UpperNumber(capacity);
 		
 		table = new Entry[Math.min(capacity, capacityMax)];
 	}
@@ -103,6 +130,7 @@ public class SimpleMap<K, V>{
 		final Entry<K, V> next;
 		
 		public Entry(int hashcode, K key, V value, Entry<K, V> next) {
+			
 			this.hashcode = hashcode;
 			this.key = key;
 			this.value = value;
