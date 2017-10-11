@@ -31,25 +31,23 @@ public class SimpleMap<K, V>{
 	// 根据传入的参数获取最接近该参数的2的整数次幂整数，返回的参数 >= 传入的参数
 	private final static int findPowerOf2UpperNumber(int num){
 
-		int number = 1;
-		while(number < num){
-			
-			number <<= 1;
-		}
+		int number = num - 1;
+
+		number |= number >>> 1;
+		number |= number >>> 2;
+		number |= number >>> 4;
+		number |= number >>> 8;
+		number |= number >>> 16;
 		
-		return number;
+		return number + 1;
 	}
 	
 	// 根据传入的参数获取最接近该参数的2的整数次幂整数，返回的参数 <= 传入的参数
 	private final static int findPowerOf2LowerNumber(int num){
 
-		int number = 1;
-		while(number < num){
-			
-			number <<= 1;
-		}
+		int number = findPowerOf2UpperNumber(num);
 		
-		return (number == num) ? number : (number >>= 1);
+		return (number == num) ? number : (number >> 1);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -59,11 +57,9 @@ public class SimpleMap<K, V>{
 			
 			throw new IllegalArgumentException("Illegal initial capacity: " + capacity);
 		}
-		
 		// 保证初始容量为2的整数次幂
-		capacity = findPowerOf2UpperNumber(capacity);
-		
-		table = new Entry[Math.min(capacity, capacityMax)];
+		capacity = findPowerOf2UpperNumber(Math.min(capacity, capacityMax));
+		table = new Entry[capacity];
 	}
 	
 	public V get(K key){
