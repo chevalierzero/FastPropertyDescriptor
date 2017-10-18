@@ -11,7 +11,7 @@ public class SimpleMap<K, V>{
 	
 	static{
 		
-		int max = 127;
+		int max = 128;
 		// 获取配置信息中的Integer最大缓存数
 		String integerCache = sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
 		
@@ -19,8 +19,8 @@ public class SimpleMap<K, V>{
 
         	max = Math.min(Math.max(Integer.parseInt(integerCache), max), 1 << 30);
         }
-		// 如果配置信息中没有的话，则使用默认的最大缓存数 + 1
-		capacityMax = findPowerOf2LowerNumber(max + 1);
+		// 如果配置信息中没有的话，则使用默认的最大缓存数
+		capacityMax = findPowerOf2LowerNumber(max);
 	}
 	
 	public SimpleMap(){
