@@ -17,7 +17,7 @@ public class SimpleMap<K, V>{
 		
         if (integerCache != null) {
 
-        	max = Math.min(Math.max(Integer.parseInt(integerCache), max), (Integer.MAX_VALUE >> 1) + 1);
+        	max = Math.min(Math.max(Integer.parseInt(integerCache), max), 1 << 30);
         }
 		// 如果配置信息中没有的话，则使用默认的最大缓存数 + 1
 		capacityMax = findPowerOf2LowerNumber(max + 1);
